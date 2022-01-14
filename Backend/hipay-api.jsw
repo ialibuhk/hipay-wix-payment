@@ -1,0 +1,207 @@
+import { fetch } from "wix-fetch";
+import { getSecret } from "wix-secrets-backend";
+
+const FormData = require("form-data");
+
+/**
+ *
+ * @param {Number} amount
+ * @param {String} items
+ * @returns {Promise<Object>}
+ */
+export async function checkout(amount, items) {
+	const bearerToken = await getSecret("hipay_merchant_token");
+	const entityId = await getSecret("hipay_entityId");
+	const url = "https://test.hipay.mn/checkout";
+
+	const myHeaders = {};
+	myHeaders["Authorization"] = "Bearer " + bearerToken;
+
+	const formdata = new FormData();
+	formdata.append("entityId", entityId);
+	formdata.append("amount", amount);
+	formdata.append("currency", "MNT");
+	formdata.append("items", items);
+
+	const requestOptions = {
+		method: "POST",
+		headers: myHeaders,
+		body: formdata,
+		redirect: "follow"
+	};
+
+	return fetch(url, requestOptions)
+		.then((response) => response.text())
+		.then((result) => result)
+		.catch((error) => console.log("error", error));
+}
+
+/**
+ * @param {String} paymentId
+ * @param {String} entityId
+ * @returns {Promise<Object>}
+ */
+export async function getPaymentInfo(paymentId, entityId) {
+	const bearerToken = await getSecret("hipay_merchant_token");
+	const url = `https://test.hipay.mn/payment/get/${paymentId}/`;
+
+	const myHeaders = {};
+	myHeaders["Content-Type"] = "application/json";
+	myHeaders["Authorization"] = "Bearer " + bearerToken;
+
+	const body = JSON.stringify({
+		entityId
+	});
+
+	const requestOptions = {
+		method: "GET",
+		body,
+		redirect: "follow"
+	};
+
+	fetch(url, requestOptions)
+		.then((res) => res.text())
+		.catch((error) => console.log("error", error));
+}
+
+/**
+ *
+ * @param {String} checkoutId
+ * @param {String} entityId
+ * @returns {Promise<Object>}
+ */
+export async function getPaymentId(checkoutId) {
+	const bearerToken = await getSecret("hipay_merchant_token");
+	const entityId = await getSecret("hipay_entityId");
+	const url = "https://test.hipay.mn/checkout/get/" + checkoutId;
+
+	const myHeaders = {};
+	myHeaders["Content-Type"] = "application/json";
+	myHeaders["Authorization"] = "Bearer " + bearerToken;
+
+	const body = JSON.stringify({
+		entityId
+	});
+
+	const requestOptions = {
+		method: "GET",
+		body: body
+	};
+
+	return fetch(url, requestOptions)
+		.then((res) => res.text())
+		.then((result) => result)
+		.catch((e) => console.log("e", e));
+}
+
+// /**
+//  *
+//  * @param {String} entityId
+//  * @param {String} paymentId
+//  * @param {String} checkoutId
+//  * @returns JSON
+//  */
+// export async function recurringPaymentRequest(entityId, paymentId, checkoutId) {
+// 	const bearerToken = await getSecret('hipay_merchant_token');
+// }
+
+/**
+ *
+ * @param {String} checkoutId
+ * @returns {Promise<Object>}
+ */
+export async function getCheckoutStatus(checkoutId) {
+	const bearerToken = await getSecret("hipay_merchant_token");
+	let url = `https://test.hipay.mn/checkout/get/${checkoutId}`;
+
+	const myHeaders = {};
+	myHeaders["Content-Type"] = "application/json";
+	myHeaders["Authorization"] = "Bearer " + bearerToken;
+
+	const requestOptions = {
+		method: "GET",
+		redirect: "follow"
+	};
+
+	return fetch(url, requestOptions)
+		.then((res) => res.text())
+		.then((result) => result)
+		.catch((e) => console.log("e", e));
+}
+
+/**
+ *
+ * @param {String} checkoutId
+ * @returns {Promise<Object>}
+ */
+export async function cancelCheckout(checkoutId) {
+	const bearerToken = await getSecret("hipay_merchant_token");
+	const url = "https://test.hipay.mn/checkout/cancel";
+
+	const myHeaders = {};
+	myHeaders["Content-Type"] = "application/json";
+	myHeaders["Authorization"] = "Bearer " + bearerToken;
+
+	const body = JSON.stringify({
+		checkoutId
+	});
+
+	const requestOptions = {
+		method: "GET",
+		body,
+		redirect: "follow"
+	};
+
+	return fetch(url, requestOptions)
+		.then((res) => res.text())
+		.then((result) => result)
+		.catch((error) => console.log("error", error));
+}
+
+import { badRequest, response } from "wix-http-functions";
+
+export function post_paymentSuccess(request) {
+	const resp = {
+		headers: {
+			"Content-Type": "application/json"
+		}
+	};
+
+	try {
+		const options = {
+			status: 200,
+			body: {
+				hello: "post mapeyemtntnntntntnt yeeee",
+				code: parseInt(request.query["code"], 10),
+				id: request.query["id"],
+				amount: parseInt(request.query["amount"], 10),
+				currency: request.query["currency"],
+				entityId: request.query["entityId"],
+				checkoutId: request.query["checkoutId"],
+				paymentType: request.query["paymentType"],
+				paymentDate: request.query["paymentDate"],
+				description: request.query["description"],
+				details: request.query["details"]
+			},
+			headers: {
+				"Content-Type": "application/json"
+			}
+		};
+		return response(options);
+	} catch (err) {
+		resp.body = {
+			error: err
+		};
+		return badRequest(resp);
+	}
+}
+
+export function post_paymentFail(request) {
+	const resp = {
+		headers: {
+			"Content-Type": "application/json"
+		}
+	};
+	try {
+	} catch (error) {}
+}

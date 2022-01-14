@@ -1,0 +1,22 @@
+{
+  "name": "hipay-wix-payment",
+  "version": "1.0.0",
+  "description": "Hi-Pay APIs for Wix customers",
+  "main": "README.md",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ialibuhk/hipay-wix-payment.git"
+  },
+  "author": "Khubilai Ikhbileg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ialibuhk/hipay-wix-payment/issues"
+  },
+  "homepage": "https://github.com/ialibuhk/hipay-wix-payment#readme",
+  "dependencies": {
+    "form-data": "^4.0.0"
+  }
+}
